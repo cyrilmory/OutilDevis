@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ using Xceed.Wpf.Toolkit;
 
 namespace OutilDevis
 {
-    public class OuvrageWrapPanel : WrapPanel
+    public abstract class OuvrageWrapPanel : WrapPanel
     {
 
         public OuvrageWrapPanel()
@@ -24,7 +25,8 @@ namespace OutilDevis
             this.Orientation = Orientation.Horizontal;
         }
 
-        decimal GetPrixUnitaire() { return (0); }
+        public abstract decimal GetPrixUnitaire();
+        public abstract string GetDesignation();
 
         public void addLabeledElementToPanel(Control element, Label label, string labelName)
         {
@@ -64,9 +66,13 @@ namespace OutilDevis
             addLabeledElementToPanel(prixUnitaireInput, prixUnitaireLabel, "Prix unitaire");
             addLabeledElementToPanel(quantiteInput, quantiteLabel, "Quantité");
         }
-        decimal GetPrixUnitaire()
+        public override decimal GetPrixUnitaire()
         {
             return (Convert.ToDecimal(this.prixUnitaireInput.Value));
+        }
+        public override string GetDesignation()
+        {
+            return ("Libre");
         }
     }
 
@@ -98,9 +104,13 @@ namespace OutilDevis
             addLabeledElementToPanel(surfaceInput, surfaceLabel, "Surface");
             addLabeledElementToPanel(recetteInput, recetteLabel, "Recette");
         }
-        decimal GetPrixUnitaire()
+        public override decimal GetPrixUnitaire()
         {
             return Convert.ToDecimal(33);
+        }
+        public override string GetDesignation()
+        {
+            return ("Enduit");
         }
     }
 
@@ -147,9 +157,14 @@ namespace OutilDevis
             addLabeledElementToPanel(hauteurInput, hauteurLabel, "Hauteur");
             addLabeledElementToPanel(optionsInput, optionsLabel, "Options");
         }
-        decimal GetPrixUnitaire()
+
+        public override decimal GetPrixUnitaire()
         {
             return Convert.ToDecimal(1800);
+        }
+        public override string GetDesignation()
+        {
+            return ("Ouverture");
         }
     }
 
@@ -165,6 +180,7 @@ namespace OutilDevis
     // Declare the DataTable (storing values) and the DataGrid (displaying them)
     System.Data.DataTable table;
     DataGrid tableau;
+    DataView DevisView;
 
     public MainWindow()
         {
@@ -173,6 +189,7 @@ namespace OutilDevis
 
             // Initialize the data table
             table = new System.Data.DataTable("DevisTable");
+            initializeDataTable();
 
             // Initialize the data grid
             tableau = new DataGrid();
@@ -187,17 +204,28 @@ namespace OutilDevis
             // Create new DataColumn, set DataType, 
             // ColumnName and add to DataTable.    
             column = new System.Data.DataColumn();
-            column.DataType = System.Type.GetType("System.String");
-            column.ColumnName = "Désignation";
+            column.DataType = System.Type.GetType("System.Int32");
+            column.ColumnName = "ID";
             column.ReadOnly = true;
             column.Unique = true;
+            column.AutoIncrement = true;
+            column.AutoIncrementSeed = 1;
             // Add the Column to the DataColumnCollection.
             table.Columns.Add(column);
 
             // Create second column.
-            column = new System.Data.DataColumn();
-            column.DataType = System.Type.GetType("System.Decimal");
-            column.ColumnName = "Prix unitaire";
+            column = new System.Data.DataColumn("Désignation", typeof(string));
+            //column.DataType = System.Type.GetType("System.String");
+            //column.ColumnName = "Désignation";
+            column.ReadOnly = false;
+            column.Unique = false;
+            // Add the Column to the DataColumnCollection.
+            table.Columns.Add(column);
+
+            // Create third column.
+            column = new System.Data.DataColumn("Prix unitaire", typeof(decimal));
+            //column.DataType = System.Type.GetType("System.Decimal");
+            //column.ColumnName = "Prix unitaire";
             column.ReadOnly = false;
             column.Unique = false;
             // Add the column to the table.
@@ -205,24 +233,44 @@ namespace OutilDevis
 
             // Make the ID column the primary key column.
             System.Data.DataColumn[] PrimaryKeyColumns = new System.Data.DataColumn[1];
-            PrimaryKeyColumns[0] = table.Columns["Désignation"];
+            PrimaryKeyColumns[0] = table.Columns["ID"];
             table.PrimaryKey = PrimaryKeyColumns;
         }
 
     private void updateDataTable(WrapPanel panel) ///// TO BE CONTINUED
         {
-            System.Data.DataRow row;
+            // Clear the existing rows from the data table
+            table.Rows.Clear();
 
-            // Create three new DataRow objects and add 
-            // them to the DataTable
-            int numberOfRows = panel.Children.Count;
-            for (int i = 0; i < numberOfRows; i++)
+            // Walk through the UI to find the ouvrage panels
+            System.Collections.IEnumerator rowEnumerator = panel.Children.GetEnumerator();
+            // The first child is the DataGrid
+            _ = rowEnumerator.MoveNext();
+
+            // Declare tableRow, which will be used in the loop
+            System.Data.DataRow tableRow;
+            while (rowEnumerator.MoveNext())
             {
-                row = table.NewRow();
-                row["Désignation"] = panel.Children.GetEnumerator();
-                row["ParentItem"] = "ParentItem " + i;
-                table.Rows.Add(row);
+                WrapPanel currentRow = (WrapPanel)rowEnumerator.Current;
+                System.Collections.IEnumerator rowElementsEnumerator = currentRow.Children.GetEnumerator();
+                // Suprisingly, the first child is something invalid
+                _ = rowElementsEnumerator.MoveNext();
+                // The next child is the remove button
+                _ = rowElementsEnumerator.MoveNext();
+                // The next child is the combo box
+                _ = rowElementsEnumerator.MoveNext();
+                // The last child is the ouvrageWrapPanel
+                OuvrageWrapPanel ouvrage = (OuvrageWrapPanel)rowElementsEnumerator.Current;
+
+                tableRow = table.NewRow();
+                tableRow[1] = ouvrage.GetDesignation(); ;
+                tableRow[2] = ouvrage.GetPrixUnitaire();
+                table.Rows.Add(tableRow);
             }
+
+            DevisView = new DataView(table);
+            tableau.ItemsSource = DevisView;
+
         }
 
             private void addLineButton_Click(object sender, RoutedEventArgs e)
@@ -281,6 +329,11 @@ namespace OutilDevis
                 linePanel.Children.Add(currentPanel);
             };
 
+        }
+
+        private void button_Click(object sender, RoutedEventArgs e)
+        {
+            this.updateDataTable(mainWrap);
         }
     }
 }
