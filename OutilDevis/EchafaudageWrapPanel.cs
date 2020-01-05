@@ -23,9 +23,9 @@ namespace OutilDevis
             // Add them as children to the panel
             addLabeledElementToPanel(surfaceInput, surfaceLabel, "Surface");
         }
-        public override decimal GetPrixUnitaire()
+        public override Single GetPrixUnitaire()
         {
-            return (Convert.ToDecimal(12));
+            return (Convert.ToSingle(12));
         }
         public override string GetDesignation()
         {

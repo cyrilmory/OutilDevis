@@ -33,10 +33,10 @@ namespace OutilDevis
             addLabeledElementToPanel(recetteInput, recetteLabel, "Recette");
             addLabeledElementToPanel(surfaceInput, surfaceLabel, "Surface");
         }
-        public override decimal GetPrixUnitaire()
+        public override Single GetPrixUnitaire()
         {
-            if (recetteInput.SelectedItem.ToString() == "Chaux-sable") return (Convert.ToDecimal(38));
-            if (recetteInput.SelectedItem.ToString() == "Chaux-chanvre Alliance4") return (Convert.ToDecimal(42));
+            if (recetteInput.SelectedItem.ToString() == "Chaux-sable") return (Convert.ToSingle(38));
+            if (recetteInput.SelectedItem.ToString() == "Chaux-chanvre Alliance4") return (Convert.ToSingle(42));
             return (0);
         }
         public override string GetDesignation()

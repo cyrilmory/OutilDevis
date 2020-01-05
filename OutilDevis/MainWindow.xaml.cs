@@ -26,11 +26,11 @@ namespace OutilDevis
             this.Orientation = Orientation.Horizontal;
         }
 
-        public abstract decimal GetPrixUnitaire();
+        public abstract Single GetPrixUnitaire();
         public abstract string GetDesignation();
         public abstract int GetQuantite();
 
-        public virtual decimal GetVolumeGravats() { return 0; }
+        public virtual Single GetVolumeGravats() { return 0; }
 
         public void addLabeledElementToPanel(Control element, Label label, string labelName)
         {
@@ -73,9 +73,9 @@ namespace OutilDevis
             addLabeledElementToPanel(prixUnitaireInput, prixUnitaireLabel, "Prix unitaire");
             addLabeledElementToPanel(quantiteInput, quantiteLabel, "Quantité");
         }
-        public override decimal GetPrixUnitaire()
+        public override Single GetPrixUnitaire()
         {
-            return (Convert.ToDecimal(this.prixUnitaireInput.Value));
+            return (Convert.ToSingle(this.prixUnitaireInput.Value));
         }
         public override string GetDesignation()
         {
@@ -115,9 +115,9 @@ namespace OutilDevis
             addLabeledElementToPanel(surfaceInput, surfaceLabel, "Surface");
             addLabeledElementToPanel(recetteInput, recetteLabel, "Recette");
         }
-        public override decimal GetPrixUnitaire()
+        public override Single GetPrixUnitaire()
         {
-            return Convert.ToDecimal(33);
+            return Convert.ToSingle(33);
         }
         public override string GetDesignation()
         {
@@ -144,7 +144,7 @@ namespace OutilDevis
         Label optionsLabel;
 
         // Options
-        bool Lindage, AppuiBois, AppuiBriques, PlotsBeton, Echafaudage;
+        bool Lindage, AppuiBois, AppuiBriques, DansOuvrageExistant, PlotsBeton, Echafaudage;
 
         public OuvertureWrapPanel()
         {
@@ -166,6 +166,7 @@ namespace OutilDevis
             optionsInput.Items.Add("Lindage");
             optionsInput.Items.Add("Appui bois");
             optionsInput.Items.Add("Appui briques");
+            optionsInput.Items.Add("Dans ouvrage existant");
             optionsInput.Items.Add("Plots béton");
             optionsInput.Items.Add("Echafaudage");
 
@@ -193,15 +194,66 @@ namespace OutilDevis
             Lindage = optionsInput.SelectedValue.Contains("Lindage");
             AppuiBois = optionsInput.SelectedValue.Contains("Appui bois");
             AppuiBriques = optionsInput.SelectedValue.Contains("Appui briques");
+            DansOuvrageExistant = optionsInput.SelectedValue.Contains("Dans ouvrage existant");
             PlotsBeton = optionsInput.SelectedValue.Contains("Plots béton");
             Echafaudage = optionsInput.SelectedValue.Contains("Echafaudage");
         }
 
-        public override decimal GetPrixUnitaire()
+        public override Single GetPrixUnitaire()
         {
             retrieveOptions();
-            return Convert.ToDecimal(1800);
+            Single joursMainOeuvre = 0;
+            Single volumeBois = 0;
+            Single largeur = Convert.ToSingle(largeurInput.Value);
+            Single hauteur = Convert.ToSingle(hauteurInput.Value);
+
+            // Base en fonction de l'essence et de la largeur
+            if (essenceInput.SelectedItem.ToString() == "Douglas") joursMainOeuvre = 5 + (largeur - 100) / 50;
+            if (essenceInput.SelectedItem.ToString() == "Chêne") joursMainOeuvre = Convert.ToSingle(5.5) + (largeur - 100) / 40;
+
+            // Supplément pour les très hautes ouvertures
+            if (hauteur> 210) joursMainOeuvre += (hauteur - 210) / 75;
+
+            // Remise pour les ouvertures très peu hautes
+            if (hauteur < 120) joursMainOeuvre -= Convert.ToSingle(1.3);
+
+            // Suppléments pour les options
+            if (Lindage) joursMainOeuvre += 1;
+            if (AppuiBois) joursMainOeuvre += Convert.ToSingle(0.5);
+            if (AppuiBriques) joursMainOeuvre += Convert.ToSingle(largeur/200);
+            if (DansOuvrageExistant) joursMainOeuvre += 1;
+            if (PlotsBeton) joursMainOeuvre += 1;
+            if (Echafaudage) joursMainOeuvre += 1;
+
+            // Calcul du volume de bois
+            Single epaisseurLinteaux;
+            if (largeur > 150) epaisseurLinteaux = 20; else epaisseurLinteaux = Convert.ToSingle(12.5);
+            if (Lindage)
+                // 4 jambages et 3 linteaux, section des jambages 12.5 * 20
+                volumeBois = 4 * Convert.ToSingle(12.5) * 20 * hauteur + 3 * largeur * 20 * epaisseurLinteaux;
+            else
+                // 6 jambages et 3 linteaux
+                volumeBois = 6 * Convert.ToSingle(12.5) * 20 * hauteur + 3 * largeur * 20 * epaisseurLinteaux;
+
+            // Ajouter l'appui bois si nécessaire
+            if (AppuiBois) volumeBois += 3 * largeur * 20 * Convert.ToSingle(12.5);
+
+            // Conversion en m3
+            volumeBois = volumeBois / 1000000;
+
+            // Calcul final du coût
+            Single prixBois = 0;
+            if (essenceInput.SelectedItem.ToString() == "Douglas") prixBois = volumeBois * 400;
+            if (essenceInput.SelectedItem.ToString() == "Chêne") prixBois = volumeBois * 700;
+
+            return Convert.ToSingle(Math.Round(Convert.ToDecimal((joursMainOeuvre * 350) + prixBois)));
         }
+        public override Single GetVolumeGravats() 
+        {
+            // Take 10cm margin all around, assume 50cm thickness, and convert to m²
+            return Convert.ToSingle((largeurInput.Value + 20) * (hauteurInput.Value + 10) * 50 / 1000000);
+        }
+
         // Build the Désignation string from the user's choices
         public override string GetDesignation()
         {
@@ -281,7 +333,7 @@ namespace OutilDevis
             table.Columns.Add(column);
 
             // Create second column.
-            column = new System.Data.DataColumn("Prix unitaire", typeof(decimal));
+            column = new System.Data.DataColumn("Prix unitaire", typeof(Single));
             column.ReadOnly = false;
             column.Unique = false;
             // Add the column to the table.
@@ -295,7 +347,7 @@ namespace OutilDevis
             table.Columns.Add(column);
 
             // Create fourth column.
-            column = new System.Data.DataColumn("Prix", typeof(decimal));
+            column = new System.Data.DataColumn("Prix", typeof(Single));
             column.ReadOnly = false;
             column.Unique = false;
             // Add the column to the table.
@@ -314,7 +366,7 @@ namespace OutilDevis
 
             // Declare tableRow, which will be used in the loop
             System.Data.DataRow tableRow;
-            decimal volumeGravats = 0;
+            Single volumeGravats = 0;
             while (rowEnumerator.MoveNext())
             {
                 WrapPanel currentRow = (WrapPanel)rowEnumerator.Current;
@@ -341,7 +393,7 @@ namespace OutilDevis
 
             // Dernière ligne : évacuation des gravats
             tableRow = table.NewRow();
-            decimal prixUnitaireEvacuationGravats = 150;
+            Single prixUnitaireEvacuationGravats = 150;
             tableRow[0] = "Evacuation des gravats";
             tableRow[1] = prixUnitaireEvacuationGravats;
             tableRow[2] = (int)volumeGravats;

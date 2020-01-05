@@ -34,11 +34,11 @@ namespace OutilDevis
             addLabeledElementToPanel(existantInput, existantLabel, "Enduit existant");
             addLabeledElementToPanel(surfaceInput, surfaceLabel, "Surface");
         }
-        public override decimal GetPrixUnitaire()
+        public override Single GetPrixUnitaire()
         {
-            if (existantInput.SelectedItem.ToString() == "Chaux") return (Convert.ToDecimal(15));
-            if (existantInput.SelectedItem.ToString() == "Ciment") return (Convert.ToDecimal(30));
-            if (existantInput.SelectedItem.ToString() == "Ciment grillagé") return (Convert.ToDecimal(35));
+            if (existantInput.SelectedItem.ToString() == "Chaux") return (Convert.ToSingle(15));
+            if (existantInput.SelectedItem.ToString() == "Ciment") return (Convert.ToSingle(30));
+            if (existantInput.SelectedItem.ToString() == "Ciment grillagé") return (Convert.ToSingle(35));
             return (0);
         }
         public override string GetDesignation()
@@ -57,9 +57,9 @@ namespace OutilDevis
         }
 
         // Assume 3cm of thickness
-        public override decimal GetVolumeGravats()
+        public override Single GetVolumeGravats()
         {
-            return (Convert.ToDecimal(this.surfaceInput.Value * 0.03));
+            return (Convert.ToSingle(this.surfaceInput.Value * 0.03));
         }
     }
 }
