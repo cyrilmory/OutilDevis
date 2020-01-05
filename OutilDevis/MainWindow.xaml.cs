@@ -42,66 +42,18 @@ namespace OutilDevis
         }
     }
 
-
-
-    public class EnduitWrapPanel : OuvrageWrapPanel
-    {
-        // Controls
-        IntegerUpDown surfaceInput;
-        CheckListBox recetteInput;
-
-        // Labels
-        Label surfaceLabel;
-        Label recetteLabel;
-
-        public EnduitWrapPanel()
-        {
-            // Initialize all controls and their labels
-            surfaceInput = new IntegerUpDown();
-            recetteInput = new CheckListBox();
-            
-            surfaceLabel = new Label();
-            recetteLabel = new Label();
-
-            // Setup the controls that need it
-            recetteInput.Items.Add("Chaux");
-            recetteInput.Items.Add("Terre");
-            recetteInput.Items.Add("Chanvre");
-
-            // Add them as children to the panel
-            addLabeledElementToPanel(surfaceInput, surfaceLabel, "Surface");
-            addLabeledElementToPanel(recetteInput, recetteLabel, "Recette");
-        }
-        public override Single GetPrixUnitaire()
-        {
-            return Convert.ToSingle(33);
-        }
-        public override string GetDesignation()
-        {
-            return ("Enduit");
-        }
-        public override int GetQuantite()
-        {
-            return ((int)surfaceInput.Value);
-        }
-    }
-
-
-   
-
-
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
 
-    // Declare the DataTable (storing values) and the DataGrid (displaying them)
-    System.Data.DataTable table;
-    DataGrid tableau;
-    DataView DevisView;
+        // Declare the DataTable (storing values) and the DataGrid (displaying them)
+        System.Data.DataTable table;
+        DataGrid tableau;
+        DataView DevisView;
 
-    public MainWindow()
+        public MainWindow()
         {
             InitializeComponent();
             mainWrap.Orientation = Orientation.Vertical;
@@ -115,7 +67,7 @@ namespace OutilDevis
             _ = mainWrap.Children.Add(tableau);
         }
 
-    private void initializeDataTable()
+        private void initializeDataTable()
         {
             // Declare variables for DataColumn and DataRow objects.
             System.Data.DataColumn column;
@@ -153,7 +105,7 @@ namespace OutilDevis
             table.Columns.Add(column);
         }
 
-    private void updateDataTable(WrapPanel panel)
+        private void updateDataTable(WrapPanel panel)
         {
             // Clear the existing rows from the data table
             table.Rows.Clear();
@@ -204,7 +156,7 @@ namespace OutilDevis
 
         }
 
-            private void addLineButton_Click(object sender, RoutedEventArgs e)
+        private void addLineButton_Click(object sender, RoutedEventArgs e)
         {
             // Create a line panel that will contain the remove button and the ouvrage box
             var linePanel = new WrapPanel();
@@ -244,9 +196,6 @@ namespace OutilDevis
             // Ouverture
             OuvertureWrapPanel ouverturePanel = new OuvertureWrapPanel();
 
-            // Enduit
-            EnduitWrapPanel enduitPanel = new EnduitWrapPanel();
-
             // Libre
             LibreWrapPanel librePanel = new LibreWrapPanel();
 
@@ -256,7 +205,7 @@ namespace OutilDevis
             // Corps d'enduit
             CorpsDenduitWrapPanel corpsDenduitPanel = new CorpsDenduitWrapPanel();
 
-            // Corps d'enduit
+            // Piquage des enduits existants
             PiquageDesEnduitsExistantsWrapPanel piquageDesEnduitsExistantsPanel = new PiquageDesEnduitsExistantsWrapPanel();
 
             WrapPanel currentPanel = null;
@@ -265,10 +214,9 @@ namespace OutilDevis
             // When the selection changes in the ouvrage box, just set the correct options panel as child to line panel
             ouvrageComboBox.SelectionChanged += delegate
             {
-                if(currentPanel != null) linePanel.Children.Remove(currentPanel);
+                if (currentPanel != null) linePanel.Children.Remove(currentPanel);
 
                 if (ouvrageComboBox.SelectedItem.ToString() == "Ouverture") currentPanel = ouverturePanel;
-                if (ouvrageComboBox.SelectedItem.ToString() == "Enduit") currentPanel = enduitPanel;
                 if (ouvrageComboBox.SelectedItem.ToString() == "Libre") currentPanel = librePanel;
                 if (ouvrageComboBox.SelectedItem.ToString() == "Echafaudage") currentPanel = echafaudagePanel;
                 if (ouvrageComboBox.SelectedItem.ToString() == "Corps d'enduit") currentPanel = corpsDenduitPanel;
