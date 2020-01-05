@@ -30,6 +30,10 @@ namespace OutilDevis
             existantInput.Items.Add("Ciment");
             existantInput.Items.Add("Ciment grillagé");
 
+            // Setup defaults
+            existantInput.SelectedItem = "Ciment";
+            surfaceInput.Value = 0;
+
             // Add them as children to the panel
             addLabeledElementToPanel(existantInput, existantLabel, "Enduit existant");
             addLabeledElementToPanel(surfaceInput, surfaceLabel, "Surface");

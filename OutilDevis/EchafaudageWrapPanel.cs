@@ -20,6 +20,9 @@ namespace OutilDevis
             surfaceInput = new IntegerUpDown();
             surfaceLabel = new Label();
 
+            // Set defaults
+            surfaceInput.Value = 0;
+
             // Add them as children to the panel
             addLabeledElementToPanel(surfaceInput, surfaceLabel, "Surface");
         }

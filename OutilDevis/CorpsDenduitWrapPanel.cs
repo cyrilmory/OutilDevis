@@ -29,6 +29,10 @@ namespace OutilDevis
             recetteInput.Items.Add("Chaux-sable");
             recetteInput.Items.Add("Chaux-chanvre Alliance4");
 
+            // Set the defaults
+            recetteInput.SelectedItem = "Chaux-sable";
+            surfaceInput.Value = 0;
+
             // Add them as children to the panel
             addLabeledElementToPanel(recetteInput, recetteLabel, "Recette");
             addLabeledElementToPanel(surfaceInput, surfaceLabel, "Surface");
