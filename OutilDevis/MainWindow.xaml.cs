@@ -126,20 +126,24 @@ namespace OutilDevis
                 _ = rowElementsEnumerator.MoveNext();
                 // The next child is the remove button
                 _ = rowElementsEnumerator.MoveNext();
-                // The next child is the combo box
-                _ = rowElementsEnumerator.MoveNext();
-                // The last child is the ouvrageWrapPanel
-                OuvrageWrapPanel ouvrage = (OuvrageWrapPanel)rowElementsEnumerator.Current;
+                ComboBox ouvrageBox = (ComboBox)rowElementsEnumerator.Current;
+                if (ouvrageBox.SelectedItem != null)
+                    {
+                    // The next child is the combo box
+                    _ = rowElementsEnumerator.MoveNext();
+                    // The last child is the ouvrageWrapPanel
+                    OuvrageWrapPanel ouvrage = (OuvrageWrapPanel)rowElementsEnumerator.Current;
 
-                tableRow = table.NewRow();
-                tableRow[0] = ouvrage.GetDesignation();
-                tableRow[1] = ouvrage.GetPrixUnitaire();
-                tableRow[2] = ouvrage.GetQuantite();
-                tableRow[3] = ouvrage.GetPrixUnitaire() * ouvrage.GetQuantite();
-                table.Rows.Add(tableRow);
+                    tableRow = table.NewRow();
+                    tableRow[0] = ouvrage.GetDesignation();
+                    tableRow[1] = ouvrage.GetPrixUnitaire();
+                    tableRow[2] = ouvrage.GetQuantite();
+                    tableRow[3] = ouvrage.GetPrixUnitaire() * ouvrage.GetQuantite();
+                    table.Rows.Add(tableRow);
 
-                // Cumul de la quantité de gravats
-                volumeGravats += ouvrage.GetVolumeGravats();
+                    // Cumul de la quantité de gravats
+                    volumeGravats += ouvrage.GetVolumeGravats();
+                    }
             }
 
             // Dernière ligne : évacuation des gravats
@@ -174,12 +178,20 @@ namespace OutilDevis
 
             // Create the ouvrage combo box and add it to the new line panel
             var ouvrageComboBox = new ComboBox();
-            _ = ouvrageComboBox.Items.Add("Ouverture");
-            _ = ouvrageComboBox.Items.Add("Enduit");
-            _ = ouvrageComboBox.Items.Add("Libre");
+            _ = ouvrageComboBox.Items.Add("Ouvrage libre");
             _ = ouvrageComboBox.Items.Add("Echafaudage");
-            _ = ouvrageComboBox.Items.Add("Corps d'enduit");
+            _ = ouvrageComboBox.Items.Add("Ouverture");
+            _ = ouvrageComboBox.Items.Add("Sondage de la façade");
+            _ = ouvrageComboBox.Items.Add("Préparation des murs");
             _ = ouvrageComboBox.Items.Add("Piquage des enduits existants");
+            _ = ouvrageComboBox.Items.Add("Renformis");
+            _ = ouvrageComboBox.Items.Add("Corps d'enduit");
+            _ = ouvrageComboBox.Items.Add("Enduit de finition");
+            _ = ouvrageComboBox.Items.Add("Décaissement");
+            _ = ouvrageComboBox.Items.Add("Hérisson ventilé");
+            _ = ouvrageComboBox.Items.Add("Isolation liège");
+            _ = ouvrageComboBox.Items.Add("Dalle chaux");
+
             ouvrageComboBox.MaxHeight = 25;
             _ = linePanel.Children.Add(ouvrageComboBox);
 
@@ -193,20 +205,19 @@ namespace OutilDevis
             // Create all possible options panel
             //////////////////////////////////////
 
-            // Ouverture
-            OuvertureWrapPanel ouverturePanel = new OuvertureWrapPanel();
-
-            // Libre
             LibreWrapPanel librePanel = new LibreWrapPanel();
-
-            // Echafaudage
+            OuvertureWrapPanel ouverturePanel = new OuvertureWrapPanel();
             EchafaudageWrapPanel echafaudagePanel = new EchafaudageWrapPanel();
-
-            // Corps d'enduit
             CorpsDenduitWrapPanel corpsDenduitPanel = new CorpsDenduitWrapPanel();
-
-            // Piquage des enduits existants
             PiquageDesEnduitsExistantsWrapPanel piquageDesEnduitsExistantsPanel = new PiquageDesEnduitsExistantsWrapPanel();
+            PreparationDesMursWrapPanel preparationMursPanel = new PreparationDesMursWrapPanel();
+            SondageWrapPanel sondagePanel = new SondageWrapPanel();
+            RenformisWrapPanel renformisPanel = new RenformisWrapPanel();
+            FinitionWrapPanel finitionPanel = new FinitionWrapPanel();
+            DecaissementWrapPanel decaissementPanel = new DecaissementWrapPanel();
+            HerissonWrapPanel herissonPanel = new HerissonWrapPanel();
+            LiegeWrapPanel liegePanel = new LiegeWrapPanel();
+            DalleWrapPanel dallePanel = new DalleWrapPanel();
 
             WrapPanel currentPanel = null;
 
@@ -217,10 +228,18 @@ namespace OutilDevis
                 if (currentPanel != null) linePanel.Children.Remove(currentPanel);
 
                 if (ouvrageComboBox.SelectedItem.ToString() == "Ouverture") currentPanel = ouverturePanel;
-                if (ouvrageComboBox.SelectedItem.ToString() == "Libre") currentPanel = librePanel;
+                if (ouvrageComboBox.SelectedItem.ToString() == "Ouvrage libre") currentPanel = librePanel;
                 if (ouvrageComboBox.SelectedItem.ToString() == "Echafaudage") currentPanel = echafaudagePanel;
                 if (ouvrageComboBox.SelectedItem.ToString() == "Corps d'enduit") currentPanel = corpsDenduitPanel;
                 if (ouvrageComboBox.SelectedItem.ToString() == "Piquage des enduits existants") currentPanel = piquageDesEnduitsExistantsPanel;
+                if (ouvrageComboBox.SelectedItem.ToString() == "Préparation des murs") currentPanel = preparationMursPanel;
+                if (ouvrageComboBox.SelectedItem.ToString() == "Sondage de la façade") currentPanel = sondagePanel;
+                if (ouvrageComboBox.SelectedItem.ToString() == "Renformis") currentPanel = renformisPanel;
+                if (ouvrageComboBox.SelectedItem.ToString() == "Enduit de finition") currentPanel = finitionPanel;
+                if (ouvrageComboBox.SelectedItem.ToString() == "Décaissement") currentPanel = decaissementPanel;
+                if (ouvrageComboBox.SelectedItem.ToString() == "Hérisson ventilé") currentPanel = herissonPanel;
+                if (ouvrageComboBox.SelectedItem.ToString() == "Isolation liège") currentPanel = liegePanel;
+                if (ouvrageComboBox.SelectedItem.ToString() == "Dalle chaux") currentPanel = dallePanel;
 
                 linePanel.Children.Add(currentPanel);
             };
