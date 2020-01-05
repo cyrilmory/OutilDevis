@@ -27,6 +27,9 @@ namespace OutilDevis
 
         public abstract decimal GetPrixUnitaire();
         public abstract string GetDesignation();
+        public abstract int GetQuantite();
+
+        public virtual decimal GetVolumeGravats() { return 0; }
 
         public void addLabeledElementToPanel(Control element, Label label, string labelName)
         {
@@ -61,6 +64,9 @@ namespace OutilDevis
             prixUnitaireLabel = new Label();
             quantiteLabel = new Label();
 
+            // Set the sizes of controls and labels
+            designationInput.MinWidth = 40;
+
             // Add them as children to the panel
             addLabeledElementToPanel(designationInput, designationLabel, "Désignation");
             addLabeledElementToPanel(prixUnitaireInput, prixUnitaireLabel, "Prix unitaire");
@@ -72,7 +78,11 @@ namespace OutilDevis
         }
         public override string GetDesignation()
         {
-            return ("Libre");
+            return (designationInput.Text);
+        }
+        public override int GetQuantite()
+        {
+            return ((int)quantiteInput.Value);
         }
     }
 
@@ -112,6 +122,10 @@ namespace OutilDevis
         {
             return ("Enduit");
         }
+        public override int GetQuantite()
+        {
+            return ((int)surfaceInput.Value);
+        }
     }
 
     public class OuvertureWrapPanel : OuvrageWrapPanel
@@ -127,6 +141,9 @@ namespace OutilDevis
         Label largeurLabel;
         Label hauteurLabel;
         Label optionsLabel;
+
+        // Options
+        bool Lindage, AppuiBois, AppuiBriques, PlotsBeton, Echafaudage;
 
         public OuvertureWrapPanel()
         {
@@ -151,6 +168,18 @@ namespace OutilDevis
             optionsInput.Items.Add("Plots béton");
             optionsInput.Items.Add("Echafaudage");
 
+            // Set the sizes of controls and labels
+            essenceInput.MaxHeight = 25;
+            essenceLabel.MaxHeight = 30;
+
+            largeurInput.MaxHeight = 25;
+            largeurLabel.MaxHeight = 30;
+
+            hauteurInput.MaxHeight = 25;
+            hauteurLabel.MaxHeight = 30;
+
+            optionsLabel.MaxHeight = 30;
+
             // Add them as children to the panel
             addLabeledElementToPanel(essenceInput, essenceLabel, "Essence");
             addLabeledElementToPanel(largeurInput, largeurLabel, "Largeur");
@@ -158,13 +187,51 @@ namespace OutilDevis
             addLabeledElementToPanel(optionsInput, optionsLabel, "Options");
         }
 
+        void retrieveOptions()
+        {
+            Lindage = optionsInput.SelectedValue.Contains("Lindage");
+            AppuiBois = optionsInput.SelectedValue.Contains("Appui bois");
+            AppuiBriques = optionsInput.SelectedValue.Contains("Appui briques");
+            PlotsBeton = optionsInput.SelectedValue.Contains("Plots béton");
+            Echafaudage = optionsInput.SelectedValue.Contains("Echafaudage");
+        }
+
         public override decimal GetPrixUnitaire()
         {
+            retrieveOptions();
             return Convert.ToDecimal(1800);
         }
+        // Build the Désignation string from the user's choices
         public override string GetDesignation()
         {
-            return ("Ouverture");
+            retrieveOptions();
+            string designation = "Ouverture";
+
+            // Essence
+            designation = string.Concat(designation, " avec cadre en ");
+            designation = string.Concat(designation, essenceInput.Text);
+
+            // Lindage ?
+            if (Lindage) designation = string.Concat(designation, ", en lindage");
+
+            // Largeur
+            designation = string.Concat(designation, ", largeur = ");
+            designation = string.Concat(designation, largeurInput.Text);
+            designation = string.Concat(designation, "cm");
+
+            // Hauteur
+            designation = string.Concat(designation, ", hauteur = ");
+            designation = string.Concat(designation, hauteurInput.Text);
+            designation = string.Concat(designation, "cm");
+
+            // Other options
+            if (AppuiBriques) designation = string.Concat(designation, ", avec appui en briques");
+            if (PlotsBeton) designation = string.Concat(designation, ", sur plots béton");
+            return (designation);
+        }
+        public override Int32 GetQuantite()
+        {
+            return (1);
         }
     }
 
@@ -205,36 +272,38 @@ namespace OutilDevis
             // ColumnName and add to DataTable.    
             column = new System.Data.DataColumn();
             column.DataType = System.Type.GetType("System.Int32");
-            column.ColumnName = "ID";
-            column.ReadOnly = true;
+            column.ColumnName = "N° ligne";
             column.Unique = true;
-            column.AutoIncrement = true;
-            column.AutoIncrementSeed = 1;
-            // Add the Column to the DataColumnCollection.
+            // Add the Column to the table.
             table.Columns.Add(column);
 
             // Create second column.
             column = new System.Data.DataColumn("Désignation", typeof(string));
-            //column.DataType = System.Type.GetType("System.String");
-            //column.ColumnName = "Désignation";
             column.ReadOnly = false;
             column.Unique = false;
-            // Add the Column to the DataColumnCollection.
+            // Add the Column to the table.
             table.Columns.Add(column);
 
             // Create third column.
             column = new System.Data.DataColumn("Prix unitaire", typeof(decimal));
-            //column.DataType = System.Type.GetType("System.Decimal");
-            //column.ColumnName = "Prix unitaire";
             column.ReadOnly = false;
             column.Unique = false;
             // Add the column to the table.
             table.Columns.Add(column);
 
-            // Make the ID column the primary key column.
-            System.Data.DataColumn[] PrimaryKeyColumns = new System.Data.DataColumn[1];
-            PrimaryKeyColumns[0] = table.Columns["ID"];
-            table.PrimaryKey = PrimaryKeyColumns;
+            // Create third column.
+            column = new System.Data.DataColumn("Quantité", typeof(int));
+            column.ReadOnly = false;
+            column.Unique = false;
+            // Add the column to the table.
+            table.Columns.Add(column);
+
+            // Create fourth column.
+            column = new System.Data.DataColumn("Prix", typeof(decimal));
+            column.ReadOnly = false;
+            column.Unique = false;
+            // Add the column to the table.
+            table.Columns.Add(column);
         }
 
     private void updateDataTable(WrapPanel panel) ///// TO BE CONTINUED
@@ -249,8 +318,11 @@ namespace OutilDevis
 
             // Declare tableRow, which will be used in the loop
             System.Data.DataRow tableRow;
+            Int32 lineNumber = 0;
+            decimal volumeGravats = 0;
             while (rowEnumerator.MoveNext())
             {
+                lineNumber++;
                 WrapPanel currentRow = (WrapPanel)rowEnumerator.Current;
                 System.Collections.IEnumerator rowElementsEnumerator = currentRow.Children.GetEnumerator();
                 // Suprisingly, the first child is something invalid
@@ -263,10 +335,26 @@ namespace OutilDevis
                 OuvrageWrapPanel ouvrage = (OuvrageWrapPanel)rowElementsEnumerator.Current;
 
                 tableRow = table.NewRow();
-                tableRow[1] = ouvrage.GetDesignation(); ;
+                tableRow[0] = lineNumber;
+                tableRow[1] = ouvrage.GetDesignation();
                 tableRow[2] = ouvrage.GetPrixUnitaire();
+                tableRow[3] = ouvrage.GetQuantite();
+                tableRow[4] = ouvrage.GetPrixUnitaire() * ouvrage.GetQuantite();
                 table.Rows.Add(tableRow);
+
+                // Cumul de la quantité de gravats
+                volumeGravats += ouvrage.GetVolumeGravats();
             }
+
+            // Dernière ligne : évacuation des gravats
+            tableRow = table.NewRow();
+            decimal prixUnitaireEvacuationGravats = 150;
+            tableRow[0] = lineNumber+1;
+            tableRow[1] = "Evacuation des gravats";
+            tableRow[2] = prixUnitaireEvacuationGravats;
+            tableRow[3] = (int)volumeGravats;
+            tableRow[4] = prixUnitaireEvacuationGravats * (int)volumeGravats;
+            table.Rows.Add(tableRow);
 
             DevisView = new DataView(table);
             tableau.ItemsSource = DevisView;
@@ -285,6 +373,8 @@ namespace OutilDevis
             var removeLineButton = new Button();
             removeLineButton.Content = "-";
             removeLineButton.Margin = new Thickness(5, 0, 5, 0);
+            removeLineButton.MaxHeight = 25;
+            removeLineButton.MinWidth = 25;
             _ = linePanel.Children.Add(removeLineButton);
 
             // Create the ouvrage combo box and add it to the new line panel
@@ -292,6 +382,10 @@ namespace OutilDevis
             _ = ouvrageComboBox.Items.Add("Ouverture");
             _ = ouvrageComboBox.Items.Add("Enduit");
             _ = ouvrageComboBox.Items.Add("Libre");
+            _ = ouvrageComboBox.Items.Add("Echafaudage");
+            _ = ouvrageComboBox.Items.Add("Corps d'enduit");
+            _ = ouvrageComboBox.Items.Add("Piquage des enduits existants");
+            ouvrageComboBox.MaxHeight = 25;
             _ = linePanel.Children.Add(ouvrageComboBox);
 
             // When the remove button is clicked, remove the whole line
@@ -313,6 +407,14 @@ namespace OutilDevis
             // Libre
             LibreWrapPanel librePanel = new LibreWrapPanel();
 
+            // Echafaudage
+            EchafaudageWrapPanel echafaudagePanel = new EchafaudageWrapPanel();
+
+            // Corps d'enduit
+            CorpsDenduitWrapPanel corpsDenduitPanel = new CorpsDenduitWrapPanel();
+
+            // Corps d'enduit
+            PiquageDesEnduitsExistantsWrapPanel piquageDesEnduitsExistantsPanel = new PiquageDesEnduitsExistantsWrapPanel();
 
             WrapPanel currentPanel = null;
 
@@ -325,15 +427,19 @@ namespace OutilDevis
                 if (ouvrageComboBox.SelectedItem.ToString() == "Ouverture") currentPanel = ouverturePanel;
                 if (ouvrageComboBox.SelectedItem.ToString() == "Enduit") currentPanel = enduitPanel;
                 if (ouvrageComboBox.SelectedItem.ToString() == "Libre") currentPanel = librePanel;
+                if (ouvrageComboBox.SelectedItem.ToString() == "Echafaudage") currentPanel = echafaudagePanel;
+                if (ouvrageComboBox.SelectedItem.ToString() == "Corps d'enduit") currentPanel = corpsDenduitPanel;
+                if (ouvrageComboBox.SelectedItem.ToString() == "Piquage des enduits existants") currentPanel = piquageDesEnduitsExistantsPanel;
 
                 linePanel.Children.Add(currentPanel);
             };
 
         }
 
-        private void button_Click(object sender, RoutedEventArgs e)
+        private void displayDevisButton_Click(object sender, RoutedEventArgs e)
         {
             this.updateDataTable(mainWrap);
         }
+
     }
 }

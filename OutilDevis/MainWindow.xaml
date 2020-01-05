@@ -9,7 +9,7 @@
     <Grid>
         <Button x:Name="addLineButton" Content="Ajouter une ligne" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.215,-0.159" Click="addLineButton_Click"/>
         <WrapPanel Name="mainWrap" Margin="0,35,0,0"/>
-        <Button x:Name="button" Content="Button" HorizontalAlignment="Left" Margin="136,10,0,0" VerticalAlignment="Top" Click="button_Click"/>
+        <Button x:Name="displayDevisButton" Content="Afficher le devis" HorizontalAlignment="Left" Margin="136,10,0,0" VerticalAlignment="Top" Click="displayDevisButton_Click"/>
 
     </Grid>
 </Window>
