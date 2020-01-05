@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -306,7 +307,7 @@ namespace OutilDevis
             table.Columns.Add(column);
         }
 
-    private void updateDataTable(WrapPanel panel) ///// TO BE CONTINUED
+    private void updateDataTable(WrapPanel panel)
         {
             // Clear the existing rows from the data table
             table.Rows.Clear();
@@ -441,5 +442,31 @@ namespace OutilDevis
             this.updateDataTable(mainWrap);
         }
 
+        private void exportDevisButton_Click(object sender, RoutedEventArgs e)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            IEnumerable<string> columnNames = table.Columns.Cast<DataColumn>().
+                                              Select(column => column.ColumnName);
+            sb.AppendLine(string.Join(";", columnNames));
+
+            foreach (DataRow row in table.Rows)
+            {
+                IEnumerable<string> fields = row.ItemArray.Select(field =>
+                  string.Concat("\"", field.ToString().Replace("\"", "\"\""), "\""));
+                sb.AppendLine(string.Join(";", fields));
+            }
+
+            // Build filename from client name and date
+            string outputFileName = nomClientTextBox.Text;
+            outputFileName = string.Concat(outputFileName, "_");
+            outputFileName = string.Concat(outputFileName, DateTime.Today.ToString("yyyyMMdd"));
+            outputFileName = string.Concat(outputFileName, ".csv");
+            outputFileName = string.Concat("\\", outputFileName);
+            outputFileName = string.Concat(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), outputFileName);
+
+            // Write
+            File.WriteAllText(outputFileName, sb.ToString());
+        }
     }
 }
