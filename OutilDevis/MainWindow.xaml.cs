@@ -269,23 +269,18 @@ namespace OutilDevis
             // Declare variables for DataColumn and DataRow objects.
             System.Data.DataColumn column;
 
-            // Create new DataColumn, set DataType, 
-            // ColumnName and add to DataTable.    
+            // For each column we want, create new DataColumn, set DataType, 
+            // ColumnName and add to DataTable
             column = new System.Data.DataColumn();
-            column.DataType = System.Type.GetType("System.Int32");
-            column.ColumnName = "N° ligne";
-            column.Unique = true;
-            // Add the Column to the table.
-            table.Columns.Add(column);
 
-            // Create second column.
+            // Create first column.
             column = new System.Data.DataColumn("Désignation", typeof(string));
             column.ReadOnly = false;
             column.Unique = false;
             // Add the Column to the table.
             table.Columns.Add(column);
 
-            // Create third column.
+            // Create second column.
             column = new System.Data.DataColumn("Prix unitaire", typeof(decimal));
             column.ReadOnly = false;
             column.Unique = false;
@@ -319,11 +314,9 @@ namespace OutilDevis
 
             // Declare tableRow, which will be used in the loop
             System.Data.DataRow tableRow;
-            Int32 lineNumber = 0;
             decimal volumeGravats = 0;
             while (rowEnumerator.MoveNext())
             {
-                lineNumber++;
                 WrapPanel currentRow = (WrapPanel)rowEnumerator.Current;
                 System.Collections.IEnumerator rowElementsEnumerator = currentRow.Children.GetEnumerator();
                 // Suprisingly, the first child is something invalid
@@ -336,11 +329,10 @@ namespace OutilDevis
                 OuvrageWrapPanel ouvrage = (OuvrageWrapPanel)rowElementsEnumerator.Current;
 
                 tableRow = table.NewRow();
-                tableRow[0] = lineNumber;
-                tableRow[1] = ouvrage.GetDesignation();
-                tableRow[2] = ouvrage.GetPrixUnitaire();
-                tableRow[3] = ouvrage.GetQuantite();
-                tableRow[4] = ouvrage.GetPrixUnitaire() * ouvrage.GetQuantite();
+                tableRow[0] = ouvrage.GetDesignation();
+                tableRow[1] = ouvrage.GetPrixUnitaire();
+                tableRow[2] = ouvrage.GetQuantite();
+                tableRow[3] = ouvrage.GetPrixUnitaire() * ouvrage.GetQuantite();
                 table.Rows.Add(tableRow);
 
                 // Cumul de la quantité de gravats
@@ -350,11 +342,10 @@ namespace OutilDevis
             // Dernière ligne : évacuation des gravats
             tableRow = table.NewRow();
             decimal prixUnitaireEvacuationGravats = 150;
-            tableRow[0] = lineNumber+1;
-            tableRow[1] = "Evacuation des gravats";
-            tableRow[2] = prixUnitaireEvacuationGravats;
-            tableRow[3] = (int)volumeGravats;
-            tableRow[4] = prixUnitaireEvacuationGravats * (int)volumeGravats;
+            tableRow[0] = "Evacuation des gravats";
+            tableRow[1] = prixUnitaireEvacuationGravats;
+            tableRow[2] = (int)volumeGravats;
+            tableRow[3] = prixUnitaireEvacuationGravats * (int)volumeGravats;
             table.Rows.Add(tableRow);
 
             DevisView = new DataView(table);
