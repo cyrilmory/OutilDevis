@@ -52,11 +52,15 @@ namespace OutilDevis
         }
         public override Single GetPrixUnitaire()
         {
-            if (recetteInput.SelectedItem.ToString() == "Chaux-sable") return (Convert.ToSingle(32));
-            if (recetteInput.SelectedItem.ToString() == "Chaux-terre-sable") return (Convert.ToSingle(32));
-            if (recetteInput.SelectedItem.ToString() == "Chaux-sable + pigment") return (Convert.ToSingle(38));
-            if (recetteInput.SelectedItem.ToString() == "Chaux-chanvre Alliance4") return (Convert.ToSingle(35));
-            return (0);
+            Single prix = 0;
+            if (recetteInput.SelectedItem.ToString() == "Chaux-sable") prix = Convert.ToSingle(32);
+            if (recetteInput.SelectedItem.ToString() == "Chaux-terre-sable") prix = Convert.ToSingle(32);
+            if (recetteInput.SelectedItem.ToString() == "Chaux-sable + pigment") prix = Convert.ToSingle(38);
+            if (recetteInput.SelectedItem.ToString() == "Chaux-chanvre Alliance4") prix = Convert.ToSingle(35);
+
+            // Ajouter 20€/m² pour les enduits stuqués
+            if (renduInput.SelectedItem.ToString() == "Stuqué") prix += 20;
+            return (prix);
         }
         public override string GetDesignation()
         {

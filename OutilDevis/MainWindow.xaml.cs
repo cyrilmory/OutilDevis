@@ -15,6 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Xceed.Wpf.Toolkit;
+using OfficeOpenXml;
 
 namespace OutilDevis
 {
@@ -84,14 +85,14 @@ namespace OutilDevis
             table.Columns.Add(column);
 
             // Create second column.
-            column = new System.Data.DataColumn("Prix unitaire", typeof(Single));
+            column = new System.Data.DataColumn("Quantité", typeof(int));
             column.ReadOnly = false;
             column.Unique = false;
             // Add the column to the table.
             table.Columns.Add(column);
 
             // Create third column.
-            column = new System.Data.DataColumn("Quantité", typeof(int));
+            column = new System.Data.DataColumn("Prix unitaire", typeof(Single));
             column.ReadOnly = false;
             column.Unique = false;
             // Add the column to the table.
@@ -136,8 +137,8 @@ namespace OutilDevis
 
                     tableRow = table.NewRow();
                     tableRow[0] = ouvrage.GetDesignation();
-                    tableRow[1] = ouvrage.GetPrixUnitaire();
-                    tableRow[2] = ouvrage.GetQuantite();
+                    tableRow[1] = ouvrage.GetQuantite();
+                    tableRow[2] = ouvrage.GetPrixUnitaire();
                     tableRow[3] = ouvrage.GetPrixUnitaire() * ouvrage.GetQuantite();
                     table.Rows.Add(tableRow);
 
@@ -150,8 +151,8 @@ namespace OutilDevis
             tableRow = table.NewRow();
             Single prixUnitaireEvacuationGravats = 150;
             tableRow[0] = "Evacuation des gravats";
-            tableRow[1] = prixUnitaireEvacuationGravats;
-            tableRow[2] = (int)volumeGravats;
+            tableRow[1] = (int)volumeGravats;
+            tableRow[2] = prixUnitaireEvacuationGravats;
             tableRow[3] = prixUnitaireEvacuationGravats * (int)volumeGravats;
             table.Rows.Add(tableRow);
 
@@ -270,12 +271,34 @@ namespace OutilDevis
             string outputFileName = nomClientTextBox.Text;
             outputFileName = string.Concat(outputFileName, "_");
             outputFileName = string.Concat(outputFileName, DateTime.Today.ToString("yyyyMMdd"));
-            outputFileName = string.Concat(outputFileName, ".csv");
+            //outputFileName = string.Concat(outputFileName, ".csv");
+            outputFileName = string.Concat(outputFileName, ".xlsx");
             outputFileName = string.Concat("\\", outputFileName);
             outputFileName = string.Concat(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), outputFileName);
 
             // Write
-            File.WriteAllText(outputFileName, sb.ToString());
+            //File.WriteAllText(outputFileName, sb.ToString());
+
+            //Create a new ExcelPackage
+            ExcelPackage excelPackage = new ExcelPackage();
+
+            //Set some properties of the Excel document
+            excelPackage.Workbook.Properties.Author = "SARL Franck Charreton";
+            excelPackage.Workbook.Properties.Title = "Devis";
+            excelPackage.Workbook.Properties.Subject = "Devis subject";
+            excelPackage.Workbook.Properties.Created = DateTime.Now;
+
+            //Create the WorkSheet
+            ExcelWorksheet worksheet = excelPackage.Workbook.Worksheets.Add("Sheet 1");
+
+            //Add some text to cell A1
+            worksheet.Cells["A1"].Value = "My first EPPlus spreadsheet!";
+            //You could also use [line, column] notation:
+            worksheet.Cells[1, 2].Value = "This is cell B1!";
+
+            //Save your file
+            FileInfo fi = new FileInfo(outputFileName);
+            excelPackage.SaveAs(fi);
         }
     }
 }
