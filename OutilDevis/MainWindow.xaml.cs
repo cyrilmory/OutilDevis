@@ -254,51 +254,51 @@ namespace OutilDevis
 
         private void exportDevisButton_Click(object sender, RoutedEventArgs e)
         {
-            StringBuilder sb = new StringBuilder();
-
-            IEnumerable<string> columnNames = table.Columns.Cast<DataColumn>().
-                                              Select(column => column.ColumnName);
-            sb.AppendLine(string.Join(";", columnNames));
-
-            foreach (DataRow row in table.Rows)
-            {
-                IEnumerable<string> fields = row.ItemArray.Select(field =>
-                  string.Concat("\"", field.ToString().Replace("\"", "\"\""), "\""));
-                sb.AppendLine(string.Join(";", fields));
-            }
-
-            // Build filename from client name and date
+            // Build output filename from client name and date
             string outputFileName = nomClientTextBox.Text;
             outputFileName = string.Concat(outputFileName, "_");
             outputFileName = string.Concat(outputFileName, DateTime.Today.ToString("yyyyMMdd"));
-            //outputFileName = string.Concat(outputFileName, ".csv");
             outputFileName = string.Concat(outputFileName, ".xlsx");
             outputFileName = string.Concat("\\", outputFileName);
             outputFileName = string.Concat(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), outputFileName);
 
-            // Write
-            //File.WriteAllText(outputFileName, sb.ToString());
+            // Open the DevisVierge workbook
+            string inputFileName = string.Concat(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "\\DevisVierge.xlsx");
+            var fi = new FileInfo(inputFileName);
+            var p = new ExcelPackage(fi);
 
-            //Create a new ExcelPackage
-            ExcelPackage excelPackage = new ExcelPackage();
+            //Get the only worksheet of the document
+            var ws = p.Workbook.Worksheets["Feuille1"];
+
+            // Initialize row counter
+            int rowNumber = 20;
+
+            // Set the cell values using row and column.
+            foreach (DataRow row in table.Rows)
+            {
+                // Get fields by column index.
+                string designation = row.Field<string>(0);
+                int quantite = row.Field<int>(1);
+                float prixUnitaire = row.Field<float>(2);
+
+                // Fill in the xlsx document 
+                ws.Cells[rowNumber, 1].Value = designation;
+                ws.Cells[rowNumber, 5].Value = quantite;
+                ws.Cells[rowNumber, 6].Value = prixUnitaire;
+
+                // Increment row number
+                rowNumber++;
+            }
 
             //Set some properties of the Excel document
-            excelPackage.Workbook.Properties.Author = "SARL Franck Charreton";
-            excelPackage.Workbook.Properties.Title = "Devis";
-            excelPackage.Workbook.Properties.Subject = "Devis subject";
-            excelPackage.Workbook.Properties.Created = DateTime.Now;
-
-            //Create the WorkSheet
-            ExcelWorksheet worksheet = excelPackage.Workbook.Worksheets.Add("Sheet 1");
-
-            //Add some text to cell A1
-            worksheet.Cells["A1"].Value = "My first EPPlus spreadsheet!";
-            //You could also use [line, column] notation:
-            worksheet.Cells[1, 2].Value = "This is cell B1!";
+            p.Workbook.Properties.Author = "SARL Franck Charreton";
+            p.Workbook.Properties.Title = "Devis";
+            p.Workbook.Properties.Subject = "Devis subject";
+            p.Workbook.Properties.Created = DateTime.Now;
 
             //Save your file
-            FileInfo fi = new FileInfo(outputFileName);
-            excelPackage.SaveAs(fi);
+            FileInfo ofi = new FileInfo(outputFileName);
+            p.SaveAs(ofi);
         }
     }
 }
