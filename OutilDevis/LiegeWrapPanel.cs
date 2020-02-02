@@ -39,8 +39,8 @@ namespace OutilDevis
         }
         public override Single GetPrixUnitaire()
         {
-            if (epaisseurInput.SelectedItem.ToString() == "10 cm") return (Convert.ToSingle(52));
-            if (epaisseurInput.SelectedItem.ToString() == "14 cm") return (Convert.ToSingle(73));
+            if (epaisseurInput.SelectedItem.ToString() == "10 cm") return (priceList["Charreton_Liege10"]);
+            if (epaisseurInput.SelectedItem.ToString() == "14 cm") return (priceList["Charreton_Liege14"]);
             return (0);
         }
         public override string GetDesignation()

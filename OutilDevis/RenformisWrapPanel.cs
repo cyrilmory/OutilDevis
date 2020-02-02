@@ -28,7 +28,7 @@ namespace OutilDevis
         }
         public override Single GetPrixUnitaire()
         {
-            return (Convert.ToSingle(10));
+            return (priceList["Charreton_Renformis"]);
         }
         public override string GetDesignation()
         {

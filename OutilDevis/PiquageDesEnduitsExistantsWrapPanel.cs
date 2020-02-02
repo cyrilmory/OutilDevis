@@ -40,9 +40,9 @@ namespace OutilDevis
         }
         public override Single GetPrixUnitaire()
         {
-            if (existantInput.SelectedItem.ToString() == "Chaux") return (Convert.ToSingle(15));
-            if (existantInput.SelectedItem.ToString() == "Ciment") return (Convert.ToSingle(30));
-            if (existantInput.SelectedItem.ToString() == "Ciment grillagé") return (Convert.ToSingle(35));
+            if (existantInput.SelectedItem.ToString() == "Chaux") return (priceList["Charreton_PiquageEnduitChaux"]);
+            if (existantInput.SelectedItem.ToString() == "Ciment") return (priceList["Charreton_PiquageEnduitCiment"]);
+            if (existantInput.SelectedItem.ToString() == "Ciment grillagé") return (priceList["Charreton_PiquageEnduitCimentGrillage"]);
             return (0);
         }
         public override string GetDesignation()

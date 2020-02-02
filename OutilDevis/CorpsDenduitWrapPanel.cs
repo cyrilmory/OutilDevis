@@ -39,8 +39,8 @@ namespace OutilDevis
         }
         public override Single GetPrixUnitaire()
         {
-            if (recetteInput.SelectedItem.ToString() == "Chaux-sable") return (Convert.ToSingle(38));
-            if (recetteInput.SelectedItem.ToString() == "Chaux-chanvre Alliance4") return (Convert.ToSingle(42));
+            if (recetteInput.SelectedItem.ToString() == "Chaux-sable") return (priceList["Charreton_CorpsEnduitChauxSable"]);
+            if (recetteInput.SelectedItem.ToString() == "Chaux-chanvre Alliance4") return (priceList["Charreton_CorpsEnduitChauxChanvre"]);
             return (0);
         }
         public override string GetDesignation()

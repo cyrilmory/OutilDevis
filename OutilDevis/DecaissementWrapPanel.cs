@@ -45,7 +45,7 @@ namespace OutilDevis
         }
         public override Single GetPrixUnitaire()
         {
-            return (42);
+            return (priceList["Charreton_Decaissement"]);
         }
         public override string GetDesignation()
         {

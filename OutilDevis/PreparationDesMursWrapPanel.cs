@@ -25,7 +25,7 @@ namespace OutilDevis
         }
         public override Single GetPrixUnitaire()
         {
-            return (Convert.ToSingle(8));
+            return (priceList["Charreton_PreparationMurs"]);
         }
         public override string GetDesignation()
         {

@@ -10,7 +10,7 @@ namespace OutilDevis
 
         public override Single GetPrixUnitaire()
         {
-            return (200);
+            return (priceList["Charreton_SondageFacade"]);
         }
         public override string GetDesignation()
         {

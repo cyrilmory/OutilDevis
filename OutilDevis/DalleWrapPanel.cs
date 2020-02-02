@@ -39,8 +39,8 @@ namespace OutilDevis
         }
         public override Single GetPrixUnitaire()
         {
-            if (recetteInput.SelectedItem.ToString() == "béton de chaux NHL 3.5") return (Convert.ToSingle(64));
-            if (recetteInput.SelectedItem.ToString() == "béton de chaux NHL 3.5, pouzzolane, sable de pierre ponce") return (Convert.ToSingle(70));
+            if (recetteInput.SelectedItem.ToString() == "béton de chaux NHL 3.5") return (priceList["Charreton_DalleChaux"]);
+            if (recetteInput.SelectedItem.ToString() == "béton de chaux NHL 3.5, pouzzolane, sable de pierre ponce") return (priceList["Charreton_DalleChauxPouzzolane"]);
             return (0);
         }
         public override string GetDesignation()

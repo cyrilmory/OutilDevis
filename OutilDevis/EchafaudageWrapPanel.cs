@@ -28,7 +28,7 @@ namespace OutilDevis
         }
         public override Single GetPrixUnitaire()
         {
-            return (Convert.ToSingle(12));
+            return (priceList["Charreton_Echafaudage"]);
         }
         public override string GetDesignation()
         {
