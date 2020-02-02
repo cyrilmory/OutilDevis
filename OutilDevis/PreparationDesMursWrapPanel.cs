@@ -14,7 +14,7 @@ namespace OutilDevis
         // Labels
         Label surfaceLabel;
 
-        public PreparationDesMursWrapPanel()
+        public PreparationDesMursWrapPanel(Dictionary<string, float> _priceList) : base(_priceList)
         {
             // Initialize all controls and their labels
             surfaceInput = new IntegerUpDown();

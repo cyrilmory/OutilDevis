@@ -16,15 +16,19 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Xceed.Wpf.Toolkit;
 using OfficeOpenXml;
+using System.Diagnostics;
 
 namespace OutilDevis
 {
     public abstract class OuvrageWrapPanel : WrapPanel
     {
 
-        public OuvrageWrapPanel()
+        protected Dictionary<string, float> priceList;
+
+        public OuvrageWrapPanel(Dictionary<string, float> _priceList)
         {
             this.Orientation = Orientation.Horizontal;
+            this.priceList = _priceList;
         }
 
         public abstract Single GetPrixUnitaire();
@@ -53,6 +57,7 @@ namespace OutilDevis
         System.Data.DataTable table;
         DataGrid tableau;
         DataView DevisView;
+        Dictionary<string, float> priceList;
 
         public MainWindow()
         {
@@ -66,6 +71,12 @@ namespace OutilDevis
             // Initialize the data grid
             tableau = new DataGrid();
             _ = mainWrap.Children.Add(tableau);
+
+            // Load the price list
+            string priceListFileName = string.Concat(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "\\listePrix.txt");
+            priceList = File.ReadAllLines(priceListFileName)
+              .Select(l => l.Split(new[] { '=' }))
+              .ToDictionary(s => s[0].Trim(), s => float.Parse(s[1].Trim()));
         }
 
         private void initializeDataTable()
@@ -206,19 +217,19 @@ namespace OutilDevis
             // Create all possible options panel
             //////////////////////////////////////
 
-            LibreWrapPanel librePanel = new LibreWrapPanel();
-            OuvertureWrapPanel ouverturePanel = new OuvertureWrapPanel();
-            EchafaudageWrapPanel echafaudagePanel = new EchafaudageWrapPanel();
-            CorpsDenduitWrapPanel corpsDenduitPanel = new CorpsDenduitWrapPanel();
-            PiquageDesEnduitsExistantsWrapPanel piquageDesEnduitsExistantsPanel = new PiquageDesEnduitsExistantsWrapPanel();
-            PreparationDesMursWrapPanel preparationMursPanel = new PreparationDesMursWrapPanel();
-            SondageWrapPanel sondagePanel = new SondageWrapPanel();
-            RenformisWrapPanel renformisPanel = new RenformisWrapPanel();
-            FinitionWrapPanel finitionPanel = new FinitionWrapPanel();
-            DecaissementWrapPanel decaissementPanel = new DecaissementWrapPanel();
-            HerissonWrapPanel herissonPanel = new HerissonWrapPanel();
-            LiegeWrapPanel liegePanel = new LiegeWrapPanel();
-            DalleWrapPanel dallePanel = new DalleWrapPanel();
+            LibreWrapPanel librePanel = new LibreWrapPanel(priceList);
+            OuvertureWrapPanel ouverturePanel = new OuvertureWrapPanel(priceList);
+            EchafaudageWrapPanel echafaudagePanel = new EchafaudageWrapPanel(priceList);
+            CorpsDenduitWrapPanel corpsDenduitPanel = new CorpsDenduitWrapPanel(priceList);
+            PiquageDesEnduitsExistantsWrapPanel piquageDesEnduitsExistantsPanel = new PiquageDesEnduitsExistantsWrapPanel(priceList);
+            PreparationDesMursWrapPanel preparationMursPanel = new PreparationDesMursWrapPanel(priceList);
+            SondageWrapPanel sondagePanel = new SondageWrapPanel(priceList);
+            RenformisWrapPanel renformisPanel = new RenformisWrapPanel(priceList);
+            FinitionWrapPanel finitionPanel = new FinitionWrapPanel(priceList);
+            DecaissementWrapPanel decaissementPanel = new DecaissementWrapPanel(priceList);
+            HerissonWrapPanel herissonPanel = new HerissonWrapPanel(priceList);
+            LiegeWrapPanel liegePanel = new LiegeWrapPanel(priceList);
+            DalleWrapPanel dallePanel = new DalleWrapPanel(priceList);
 
             WrapPanel currentPanel = null;
 

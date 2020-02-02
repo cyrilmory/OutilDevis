@@ -18,7 +18,7 @@ namespace OutilDevis
         Label surfaceLabel;
         Label renduLabel;
 
-        public FinitionWrapPanel()
+        public FinitionWrapPanel(Dictionary<string, float> _priceList) : base(_priceList)
         {
             // Initialize all controls and their labels
             recetteInput = new ComboBox();

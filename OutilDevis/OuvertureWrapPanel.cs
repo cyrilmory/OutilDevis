@@ -23,7 +23,7 @@ namespace OutilDevis
         // Options
         bool Lindage, AppuiBois, AppuiBriques, DansOuvrageExistant, PlotsBeton, Echafaudage;
 
-        public OuvertureWrapPanel()
+        public OuvertureWrapPanel(Dictionary<string, float> _priceList) : base(_priceList)
         {
             // Initialize all controls and their labels
             essenceInput = new ComboBox();

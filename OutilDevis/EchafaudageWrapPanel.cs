@@ -14,7 +14,7 @@ namespace OutilDevis
         // Labels
         Label surfaceLabel;
 
-        public EchafaudageWrapPanel()
+        public EchafaudageWrapPanel(Dictionary<string, float> _priceList) : base(_priceList)
         {
             // Initialize all controls and their labels
             surfaceInput = new IntegerUpDown();

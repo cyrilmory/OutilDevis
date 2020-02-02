@@ -16,7 +16,7 @@ namespace OutilDevis
         Label surfaceLabel;
         Label epaisseurLabel;
 
-        public LiegeWrapPanel()
+        public LiegeWrapPanel(Dictionary<string, float> _priceList) : base(_priceList)
         {
             // Initialize all controls and their labels
             surfaceInput = new IntegerUpDown();

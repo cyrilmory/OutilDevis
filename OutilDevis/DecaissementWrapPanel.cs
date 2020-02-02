@@ -18,7 +18,7 @@ namespace OutilDevis
         Label surfaceLabel;
         Label profondeurLabel;
 
-        public DecaissementWrapPanel()
+        public DecaissementWrapPanel(Dictionary<string, float> _priceList) : base(_priceList)
         {
             // Initialize all controls and their labels
             laTerreEstInput = new ComboBox();

@@ -18,7 +18,7 @@ namespace OutilDevis
         Label prixUnitaireLabel;
         Label quantiteLabel;
 
-        public LibreWrapPanel()
+        public LibreWrapPanel(Dictionary<string, float> _priceList) : base(_priceList)
         {
             // Initialize all controls and their labels
             designationInput = new TextBox();

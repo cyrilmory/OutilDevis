@@ -16,7 +16,7 @@ namespace OutilDevis
         Label existantLabel;
         Label surfaceLabel;
 
-        public PiquageDesEnduitsExistantsWrapPanel()
+        public PiquageDesEnduitsExistantsWrapPanel(Dictionary<string, float> _priceList) : base(_priceList)
         {
             // Initialize all controls and their labels
             existantInput = new ComboBox();

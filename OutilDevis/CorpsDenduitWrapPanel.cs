@@ -16,7 +16,7 @@ namespace OutilDevis
         Label recetteLabel;
         Label surfaceLabel;
 
-        public CorpsDenduitWrapPanel()
+        public CorpsDenduitWrapPanel(Dictionary<string, float> _priceList) : base(_priceList)
         {
             // Initialize all controls and their labels
             recetteInput = new ComboBox();
