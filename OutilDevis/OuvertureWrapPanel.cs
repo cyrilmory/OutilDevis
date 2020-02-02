@@ -90,8 +90,8 @@ namespace OutilDevis
             Single hauteur = Convert.ToSingle(hauteurInput.Value);
 
             // Base en fonction de l'essence et de la largeur
-            if (essenceInput.SelectedItem.ToString() == "Douglas") joursMainOeuvre = 5 + (largeur - 100) / 50;
-            if (essenceInput.SelectedItem.ToString() == "Chêne") joursMainOeuvre = Convert.ToSingle(5.5) + (largeur - 100) / 40;
+            if (essenceInput.SelectedItem.ToString() == "Douglas") joursMainOeuvre = 3 + largeur / 50;
+            if (essenceInput.SelectedItem.ToString() == "Chêne") joursMainOeuvre = 3 + largeur / 40;
 
             // Supplément pour les très hautes ouvertures
             if (hauteur > 210) joursMainOeuvre += (hauteur - 210) / 75;
@@ -125,10 +125,10 @@ namespace OutilDevis
 
             // Calcul final du coût
             Single prixBois = 0;
-            if (essenceInput.SelectedItem.ToString() == "Douglas") prixBois = volumeBois * 400;
-            if (essenceInput.SelectedItem.ToString() == "Chêne") prixBois = volumeBois * 700;
+            if (essenceInput.SelectedItem.ToString() == "Douglas") prixBois = volumeBois * priceList["Charreton_Douglas"];
+            if (essenceInput.SelectedItem.ToString() == "Chêne") prixBois = volumeBois * priceList["Charreton_Chene"];
 
-            return Convert.ToSingle(Math.Round(Convert.ToDecimal((joursMainOeuvre * 350) + prixBois)));
+            return Convert.ToSingle(Math.Round(Convert.ToDecimal((joursMainOeuvre * priceList["Charreton_JourneeMainOeuvre"]) + prixBois)));
         }
         public override Single GetVolumeGravats()
         {
