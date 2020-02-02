@@ -281,6 +281,14 @@ namespace OutilDevis
             //Get the only worksheet of the document
             var ws = p.Workbook.Worksheets["Feuille1"];
 
+            // Write devis number and current date
+            string devisNumberString = "Devis n° ";
+            devisNumberString = string.Concat(devisNumberString, DateTime.Today.ToString("yyyyMMdd"));
+            devisNumberString = string.Concat(devisNumberString, ", édité le ");
+            devisNumberString = string.Concat(devisNumberString, DateTime.Today.ToString("dd/MM/yyyy"));
+            devisNumberString = string.Concat(devisNumberString, ", valable 30 jours");
+            ws.Cells[10, 1].Value = devisNumberString;
+
             // Initialize row counter
             int rowNumber = 20;
 
