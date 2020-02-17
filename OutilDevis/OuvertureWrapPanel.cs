@@ -94,10 +94,13 @@ namespace OutilDevis
             if (essenceInput.SelectedItem.ToString() == "Chêne") joursMainOeuvre = 3 + largeur / 40;
 
             // Supplément pour les très hautes ouvertures
-            if (hauteur > 210) joursMainOeuvre += (hauteur - 210) / 75;
+            //if (hauteur > 210) joursMainOeuvre += (hauteur - 210) / 75;
 
             // Remise pour les ouvertures très peu hautes
-            if (hauteur < 120) joursMainOeuvre -= Convert.ToSingle(1.3);
+            //if (hauteur < 120) joursMainOeuvre -= Convert.ToSingle(1.3);
+
+            // Influence de la hauteur (en plus ou en moins) sur le temps de travail
+            joursMainOeuvre += (hauteur - 210) / 75;
 
             // Suppléments pour les options
             if (Lindage) joursMainOeuvre += 1;
