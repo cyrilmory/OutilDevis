@@ -53,9 +53,9 @@ namespace OutilDevis
             designation = string.Concat(designation, laTerreEstInput.SelectedItem.ToString());
             return (designation);
         }
-        public override int GetQuantite()
+        public override Single GetQuantite()
         {
-            return ((int)this.surfaceInput.Value);
+            return ((Single)this.surfaceInput.Value);
         }
 
         // Gravats seulement s'il faut évacuer la terre

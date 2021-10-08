@@ -33,7 +33,7 @@ namespace OutilDevis
 
         public abstract Single GetPrixUnitaire();
         public abstract string GetDesignation();
-        public abstract int GetQuantite();
+        public abstract Single GetQuantite();
 
         public virtual Single GetVolumeGravats() { return 0; }
 
@@ -73,10 +73,13 @@ namespace OutilDevis
             _ = mainWrap.Children.Add(tableau);
 
             // Load the price list
-            string priceListFileName = string.Concat(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "\\listePrix.txt");
+            string priceListFileName = string.Concat(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "\\..\\Dropbox\\sarl\\devis\\listePrix.txt");
             priceList = File.ReadAllLines(priceListFileName)
               .Select(l => l.Split(new[] { '=' }))
               .ToDictionary(s => s[0].Trim(), s => float.Parse(s[1].Trim()));
+
+            // Set the initial value for the distance IntegerUpDown to 0 km
+            distanceInput.Value = 0;
         }
 
         private void initializeDataTable()
@@ -96,7 +99,7 @@ namespace OutilDevis
             table.Columns.Add(column);
 
             // Create second column.
-            column = new System.Data.DataColumn("Quantité", typeof(int));
+            column = new System.Data.DataColumn("Quantité", typeof(Single));
             column.ReadOnly = false;
             column.Unique = false;
             // Add the column to the table.
@@ -119,6 +122,9 @@ namespace OutilDevis
 
         private void updateDataTable(WrapPanel panel)
         {
+            // Compute the multiplier due to distance
+            float distanceMultiplier = 480 / (480 - 2 * (float)distanceInput.Value);
+
             // Clear the existing rows from the data table
             table.Rows.Clear();
 
@@ -149,8 +155,8 @@ namespace OutilDevis
                     tableRow = table.NewRow();
                     tableRow[0] = ouvrage.GetDesignation();
                     tableRow[1] = ouvrage.GetQuantite();
-                    tableRow[2] = ouvrage.GetPrixUnitaire();
-                    tableRow[3] = ouvrage.GetPrixUnitaire() * ouvrage.GetQuantite();
+                    tableRow[2] = Math.Round(ouvrage.GetPrixUnitaire() * distanceMultiplier);
+                    tableRow[3] = Math.Round(ouvrage.GetPrixUnitaire() * distanceMultiplier) * ouvrage.GetQuantite();
                     table.Rows.Add(tableRow);
 
                     // Cumul de la quantité de gravats
@@ -160,11 +166,11 @@ namespace OutilDevis
 
             // Dernière ligne : évacuation des gravats
             tableRow = table.NewRow();
-            Single prixUnitaireEvacuationGravats = 150;
+            Single prixUnitaireEvacuationGravats = priceList["Charreton_Gravats"];
             tableRow[0] = "Evacuation des gravats";
-            tableRow[1] = (int)volumeGravats;
-            tableRow[2] = prixUnitaireEvacuationGravats;
-            tableRow[3] = prixUnitaireEvacuationGravats * (int)volumeGravats;
+            tableRow[1] = volumeGravats;
+            tableRow[2] = Math.Round(prixUnitaireEvacuationGravats * distanceMultiplier);
+            tableRow[3] = Math.Round(prixUnitaireEvacuationGravats * distanceMultiplier) * volumeGravats;
             table.Rows.Add(tableRow);
 
             DevisView = new DataView(table);
@@ -193,6 +199,8 @@ namespace OutilDevis
             _ = ouvrageComboBox.Items.Add("Ouvrage libre");
             _ = ouvrageComboBox.Items.Add("Ouverture");
             _ = ouvrageComboBox.Items.Add("Echafaudage");
+            _ = ouvrageComboBox.Items.Add("Arase simple");
+            _ = ouvrageComboBox.Items.Add("Arase technique");
             _ = ouvrageComboBox.Items.Add("Corps d'enduit");
             _ = ouvrageComboBox.Items.Add("Piquage des enduits existants");
             _ = ouvrageComboBox.Items.Add("Préparation des murs");
@@ -203,6 +211,9 @@ namespace OutilDevis
             _ = ouvrageComboBox.Items.Add("Hérisson ventilé");
             _ = ouvrageComboBox.Items.Add("Isolation liège");
             _ = ouvrageComboBox.Items.Add("Dalle chaux");
+            _ = ouvrageComboBox.Items.Add("Mur en pisé");
+            _ = ouvrageComboBox.Items.Add("Parement galets");
+            _ = ouvrageComboBox.Items.Add("Plancher");
 
             ouvrageComboBox.MaxHeight = 25;
             _ = linePanel.Children.Add(ouvrageComboBox);
@@ -220,6 +231,8 @@ namespace OutilDevis
             LibreWrapPanel librePanel = new LibreWrapPanel(priceList);
             OuvertureWrapPanel ouverturePanel = new OuvertureWrapPanel(priceList);
             EchafaudageWrapPanel echafaudagePanel = new EchafaudageWrapPanel(priceList);
+            AraseSimpleWrapPanel araseSimplePanel = new AraseSimpleWrapPanel(priceList);
+            AraseTechniqueWrapPanel araseTechniquePanel = new AraseTechniqueWrapPanel(priceList);
             CorpsDenduitWrapPanel corpsDenduitPanel = new CorpsDenduitWrapPanel(priceList);
             PiquageDesEnduitsExistantsWrapPanel piquageDesEnduitsExistantsPanel = new PiquageDesEnduitsExistantsWrapPanel(priceList);
             PreparationDesMursWrapPanel preparationMursPanel = new PreparationDesMursWrapPanel(priceList);
@@ -230,6 +243,9 @@ namespace OutilDevis
             HerissonWrapPanel herissonPanel = new HerissonWrapPanel(priceList);
             LiegeWrapPanel liegePanel = new LiegeWrapPanel(priceList);
             DalleWrapPanel dallePanel = new DalleWrapPanel(priceList);
+            PiseWrapPanel pisePanel = new PiseWrapPanel(priceList);
+            ParementGaletsWrapPanel parementGaletsPanel = new ParementGaletsWrapPanel(priceList);
+            PlancherWrapPanel plancherPanel = new PlancherWrapPanel(priceList);
 
             WrapPanel currentPanel = null;
 
@@ -242,6 +258,8 @@ namespace OutilDevis
                 if (ouvrageComboBox.SelectedItem.ToString() == "Ouvrage libre") currentPanel = librePanel;
                 if (ouvrageComboBox.SelectedItem.ToString() == "Ouverture") currentPanel = ouverturePanel;
                 if (ouvrageComboBox.SelectedItem.ToString() == "Echafaudage") currentPanel = echafaudagePanel;
+                if (ouvrageComboBox.SelectedItem.ToString() == "Arase simple") currentPanel = araseSimplePanel;
+                if (ouvrageComboBox.SelectedItem.ToString() == "Arase technique") currentPanel = araseTechniquePanel;
                 if (ouvrageComboBox.SelectedItem.ToString() == "Corps d'enduit") currentPanel = corpsDenduitPanel;
                 if (ouvrageComboBox.SelectedItem.ToString() == "Piquage des enduits existants") currentPanel = piquageDesEnduitsExistantsPanel;
                 if (ouvrageComboBox.SelectedItem.ToString() == "Préparation des murs") currentPanel = preparationMursPanel;
@@ -252,6 +270,9 @@ namespace OutilDevis
                 if (ouvrageComboBox.SelectedItem.ToString() == "Hérisson ventilé") currentPanel = herissonPanel;
                 if (ouvrageComboBox.SelectedItem.ToString() == "Isolation liège") currentPanel = liegePanel;
                 if (ouvrageComboBox.SelectedItem.ToString() == "Dalle chaux") currentPanel = dallePanel;
+                if (ouvrageComboBox.SelectedItem.ToString() == "Mur en pisé") currentPanel = pisePanel;
+                if (ouvrageComboBox.SelectedItem.ToString() == "Parement galets") currentPanel = parementGaletsPanel;
+                if (ouvrageComboBox.SelectedItem.ToString() == "Plancher") currentPanel = plancherPanel;
 
                 linePanel.Children.Add(currentPanel);
             };
@@ -274,7 +295,7 @@ namespace OutilDevis
             outputFileName = string.Concat(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), outputFileName);
 
             // Open the DevisVierge workbook
-            string inputFileName = string.Concat(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "\\DevisVierge.xlsx");
+            string inputFileName = string.Concat(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "\\..\\Dropbox\\sarl\\devis\\DevisVierge.xlsx");
             var fi = new FileInfo(inputFileName);
             var p = new ExcelPackage(fi);
 
@@ -297,7 +318,7 @@ namespace OutilDevis
             {
                 // Get fields by column index.
                 string designation = row.Field<string>(0);
-                int quantite = row.Field<int>(1);
+                Single quantite = row.Field<Single>(1);
                 float prixUnitaire = row.Field<float>(2);
 
                 // Fill in the xlsx document 

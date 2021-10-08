@@ -16,7 +16,7 @@ namespace OutilDevis
         {
             return ("Sondage de la façade");
         }
-        public override int GetQuantite()
+        public override Single GetQuantite()
         {
             return (1);
         }

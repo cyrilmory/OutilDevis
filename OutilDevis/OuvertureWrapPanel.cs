@@ -21,7 +21,7 @@ namespace OutilDevis
         Label optionsLabel;
 
         // Options
-        bool Lindage, AppuiBois, AppuiBriques, DansOuvrageExistant, PlotsBeton, Echafaudage;
+        bool Lindage, AppuiBois, AppuiBriques, DansOuvrageExistant, PlotsBeton, Etage, JambageBrique, TousJambagesBrique;
 
         public OuvertureWrapPanel(Dictionary<string, float> _priceList) : base(_priceList)
         {
@@ -45,7 +45,9 @@ namespace OutilDevis
             optionsInput.Items.Add("Appui briques");
             optionsInput.Items.Add("Dans ouvrage existant");
             optionsInput.Items.Add("Plots béton");
-            optionsInput.Items.Add("Echafaudage");
+            optionsInput.Items.Add("À l'étage");
+            optionsInput.Items.Add("1er jambage en briques");
+            optionsInput.Items.Add("2nd jambage en briques");
 
             // Set the sizes of controls and labels
             essenceInput.MaxHeight = 25;
@@ -78,7 +80,9 @@ namespace OutilDevis
             AppuiBriques = optionsInput.SelectedValue.Contains("Appui briques");
             DansOuvrageExistant = optionsInput.SelectedValue.Contains("Dans ouvrage existant");
             PlotsBeton = optionsInput.SelectedValue.Contains("Plots béton");
-            Echafaudage = optionsInput.SelectedValue.Contains("Echafaudage");
+            Etage = optionsInput.SelectedValue.Contains("À l'étage");
+            JambageBrique = optionsInput.SelectedValue.Contains("1er jambage en briques");
+            TousJambagesBrique = optionsInput.SelectedValue.Contains("2nd jambage en briques");
         }
 
         public override Single GetPrixUnitaire()
@@ -103,12 +107,14 @@ namespace OutilDevis
             joursMainOeuvre += (hauteur - 210) / 75;
 
             // Suppléments pour les options
-            if (Lindage) joursMainOeuvre += 1;
+            if (Lindage) joursMainOeuvre += 2;
             if (AppuiBois) joursMainOeuvre += Convert.ToSingle(0.5);
             if (AppuiBriques) joursMainOeuvre += Convert.ToSingle(largeur / 200);
             if (DansOuvrageExistant) joursMainOeuvre += 1;
             if (PlotsBeton) joursMainOeuvre += 1;
-            if (Echafaudage) joursMainOeuvre += 1;
+            if (Etage) joursMainOeuvre += 1;
+            if (JambageBrique) joursMainOeuvre += 3;
+            if (TousJambagesBrique) joursMainOeuvre += 3;
 
             // Calcul du volume de bois
             Single epaisseurLinteaux;
@@ -135,8 +141,9 @@ namespace OutilDevis
         }
         public override Single GetVolumeGravats()
         {
-            // Take 10cm margin all around, assume 50cm thickness, and convert to m²
-            return Convert.ToSingle((largeurInput.Value + 20) * (hauteurInput.Value + 10) * 50 / 1000000);
+            // Take 10cm margin all around, assume 50cm thickness, assume that once destroyed it takes 1.5 times more space, and convert to m3
+            double volumeGravats = ((double)largeurInput.Value + 20) * ((double)hauteurInput.Value + 10) * 1.5 * 50 / 1000000;
+            return Convert.ToSingle(volumeGravats);
         }
 
         // Build the Désignation string from the user's choices
@@ -167,7 +174,7 @@ namespace OutilDevis
             if (PlotsBeton) designation = string.Concat(designation, ", sur plots béton");
             return (designation);
         }
-        public override Int32 GetQuantite()
+        public override Single GetQuantite()
         {
             return (1);
         }
