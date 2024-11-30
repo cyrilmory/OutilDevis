@@ -73,7 +73,7 @@ namespace OutilDevis
             _ = mainWrap.Children.Add(tableau);
 
             // Load the price list
-            string priceListFileName = string.Concat(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "\\..\\Dropbox\\sarl\\devis\\listePrix.txt");
+            string priceListFileName = string.Concat(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "\\listePrix.txt");
             priceList = File.ReadAllLines(priceListFileName)
               .Select(l => l.Split(new[] { '=' }))
               .ToDictionary(s => s[0].Trim(), s => float.Parse(s[1].Trim()));
@@ -162,6 +162,29 @@ namespace OutilDevis
                     // Cumul de la quantité de gravats
                     volumeGravats += ouvrage.GetVolumeGravats();
                     }
+            }
+
+            // Lignes pour électricité et eau
+            if (checkBox_Elec.IsChecked == false)
+            {
+                tableRow = table.NewRow();
+                Single prixUnitaireLocationGroupeElectrogene = priceList["Charreton_GroupeElectrogene"];
+                tableRow[0] = "Location et installation d'un groupe électrogène";
+                tableRow[1] = 1;
+                tableRow[2] = Math.Round(prixUnitaireLocationGroupeElectrogene);
+                tableRow[3] = Math.Round(prixUnitaireLocationGroupeElectrogene);
+                table.Rows.Add(tableRow);
+            }
+
+            if (checkBox_Water.IsChecked == false)
+            {
+                tableRow = table.NewRow();
+                Single prixUnitaireLocationCiterne = priceList["Charreton_Citerne"];
+                tableRow[0] = "Location et installation d'une citerne d'eau";
+                tableRow[1] = 1;
+                tableRow[2] = Math.Round(prixUnitaireLocationCiterne);
+                tableRow[3] = Math.Round(prixUnitaireLocationCiterne);
+                table.Rows.Add(tableRow);
             }
 
             // Dernière ligne : évacuation des gravats
@@ -295,23 +318,25 @@ namespace OutilDevis
             outputFileName = string.Concat(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), outputFileName);
 
             // Open the DevisVierge workbook
-            string inputFileName = string.Concat(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "\\..\\Dropbox\\sarl\\devis\\DevisVierge.xlsx");
+            string inputFileName = string.Concat(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "\\DevisVierge.xlsx");
             var fi = new FileInfo(inputFileName);
             var p = new ExcelPackage(fi);
 
             //Get the only worksheet of the document
             var ws = p.Workbook.Worksheets["Feuille1"];
 
-            // Write devis number and current date
+            // Write devis number
             string devisNumberString = "Devis n° ";
             devisNumberString = string.Concat(devisNumberString, DateTime.Today.ToString("yyyyMMdd"));
-            devisNumberString = string.Concat(devisNumberString, ", édité le ");
-            devisNumberString = string.Concat(devisNumberString, DateTime.Today.ToString("dd/MM/yyyy"));
             devisNumberString = string.Concat(devisNumberString, ", valable 30 jours");
-            ws.Cells[10, 1].Value = devisNumberString;
+            ws.Cells[12, 1].Value = devisNumberString;
+
+            // Write current date
+            string dateString = string.Concat("Le ", DateTime.Today.ToString("dd/MM/yyyy"));
+            ws.Cells[13, 1].Value = dateString;
 
             // Initialize row counter
-            int rowNumber = 20;
+            int rowNumber = 21;
 
             // Set the cell values using row and column.
             foreach (DataRow row in table.Rows)
@@ -340,5 +365,6 @@ namespace OutilDevis
             FileInfo ofi = new FileInfo(outputFileName);
             p.SaveAs(ofi);
         }
+
     }
 }

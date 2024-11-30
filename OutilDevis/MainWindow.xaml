@@ -60,7 +60,7 @@
 
     <Grid>
         <Button x:Name="addLineButton" Content="Ajouter une ligne" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.215,-0.159" Click="addLineButton_Click"/>
-        <WrapPanel x:Name="mainWrap" Margin="0,35,0,0"/>
+        <WrapPanel x:Name="mainWrap" Margin="0,64,0,0"/>
         <Button x:Name="displayDevisButton" Content="Afficher le devis" HorizontalAlignment="Left" Margin="136,10,0,0" VerticalAlignment="Top" Click="displayDevisButton_Click"/>
         <Label x:Name="nomClientLabel" Content="Nom du client :" HorizontalAlignment="Left" Margin="241,7,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="nomClientTextBox" HorizontalAlignment="Left" Margin="331,12,0,0" Text="Nom" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
@@ -68,6 +68,8 @@
 
         <xctk:IntegerUpDown x:Name="distanceInput" HorizontalAlignment="Left" Margin="563,11,0,0" VerticalAlignment="Top"/>
         <Label x:Name="distanceLabel" Content="Distance (km) :" HorizontalAlignment="Left" Margin="472,8,0,0" VerticalAlignment="Top"/>
+        <CheckBox x:Name="checkBox_Elec" Content="Electricité" HorizontalAlignment="Left" Margin="18,44,0,0" VerticalAlignment="Top"/>
+        <CheckBox x:Name="checkBox_Water" Content="Eau courante" HorizontalAlignment="Left" Margin="133,44,0,0" VerticalAlignment="Top"/>
 
     </Grid>
 </Window>
