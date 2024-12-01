@@ -50,9 +50,9 @@ namespace OutilDevis
         {
             return (designationInput.Text);
         }
-        public override int GetQuantite()
+        public override Single GetQuantite()
         {
-            return ((int)quantiteInput.Value);
+            return ((Single)quantiteInput.Value);
         }
     }
 }

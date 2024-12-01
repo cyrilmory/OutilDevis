@@ -19,6 +19,7 @@ namespace OutilDevis
             // Initialize all controls and their labels
             surfaceInput = new IntegerUpDown();
             surfaceLabel = new Label();
+            surfaceInput.Value = 0;
 
             // Add them as children to the panel
             addLabeledElementToPanel(surfaceInput, surfaceLabel, "Surface");
@@ -31,9 +32,9 @@ namespace OutilDevis
         {
             return ("Préparation des murs (protection, démontage DEP, ...)");
         }
-        public override int GetQuantite()
+        public override Single GetQuantite()
         {
-            return ((int)surfaceInput.Value);
+            return ((Single)surfaceInput.Value);
         }
     }
 }

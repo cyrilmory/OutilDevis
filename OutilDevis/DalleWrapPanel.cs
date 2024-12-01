@@ -50,9 +50,9 @@ namespace OutilDevis
             designation = string.Concat(designation, ", épaisseur 10 cm, en m²");
             return (designation);
         }
-        public override int GetQuantite()
+        public override Single GetQuantite()
         {
-            return ((int)surfaceInput.Value);
+            return ((Single)surfaceInput.Value);
         }
     }
 }

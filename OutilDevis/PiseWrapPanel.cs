@@ -6,7 +6,7 @@ using System.Windows.Controls;
 
 namespace OutilDevis
 {
-    class EchafaudageWrapPanel : OuvrageWrapPanel
+    class PiseWrapPanel : OuvrageWrapPanel
     {
         // Controls
         IntegerUpDown surfaceInput;
@@ -14,7 +14,7 @@ namespace OutilDevis
         // Labels
         Label surfaceLabel;
 
-        public EchafaudageWrapPanel(Dictionary<string, float> _priceList) : base(_priceList)
+        public PiseWrapPanel(Dictionary<string, float> _priceList) : base(_priceList)
         {
             // Initialize all controls and their labels
             surfaceInput = new IntegerUpDown();
@@ -28,11 +28,11 @@ namespace OutilDevis
         }
         public override Single GetPrixUnitaire()
         {
-            return (priceList["Charreton_Echafaudage"]);
+            return (priceList["Charreton_Pise"]);
         }
         public override string GetDesignation()
         {
-            return ("Montage d'échafaudage");
+            return ("Construction d'un mur en pisé");
         }
         public override Single GetQuantite()
         {

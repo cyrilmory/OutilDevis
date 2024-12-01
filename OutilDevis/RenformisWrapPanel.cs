@@ -34,9 +34,9 @@ namespace OutilDevis
         {
             return ("Renformis (prix susceptible d'être modifié après la purge)");
         }
-        public override int GetQuantite()
+        public override Single GetQuantite()
         {
-            return ((int)surfaceInput.Value);
+            return ((Single)surfaceInput.Value);
         }
     }
 }

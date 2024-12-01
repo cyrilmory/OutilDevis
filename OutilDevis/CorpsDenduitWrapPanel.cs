@@ -49,9 +49,9 @@ namespace OutilDevis
             if (recetteInput.SelectedItem.ToString() == "Chaux-chanvre Alliance4") return ("Corps d’enduit chaux - chanvre, épaisseur 3cm, en m²");
             return ("");
         }
-        public override int GetQuantite()
+        public override Single GetQuantite()
         {
-            return ((int)this.surfaceInput.Value);
+            return ((Single)this.surfaceInput.Value);
         }
     }
 }

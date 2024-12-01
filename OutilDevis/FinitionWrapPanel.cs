@@ -75,9 +75,9 @@ namespace OutilDevis
 
             return (designation);
         }
-        public override int GetQuantite()
+        public override Single GetQuantite()
         {
-            return ((int)this.surfaceInput.Value);
+            return ((Single)this.surfaceInput.Value);
         }
     }
 }

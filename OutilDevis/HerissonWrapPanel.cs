@@ -34,9 +34,9 @@ namespace OutilDevis
         {
             return ("Hérisson ventilé, en m²");
         }
-        public override int GetQuantite()
+        public override Single GetQuantite()
         {
-            return ((int)surfaceInput.Value);
+            return ((Single)surfaceInput.Value);
         }
     }
 }

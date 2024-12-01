@@ -55,15 +55,15 @@ namespace OutilDevis
 
             return (designation);
         }
-        public override int GetQuantite()
+        public override Single GetQuantite()
         {
-            return ((int)this.surfaceInput.Value);
+            return ((Single)this.surfaceInput.Value);
         }
 
         // Assume 3cm of thickness
         public override Single GetVolumeGravats()
         {
-            return (Convert.ToSingle(this.surfaceInput.Value * 0.03));
+            return (Convert.ToSingle(this.surfaceInput.Value * 0.05));
         }
     }
 }
